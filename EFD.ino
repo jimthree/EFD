@@ -21,17 +21,22 @@ int alertStatus[2] ={0,0};
 
 // define the pins for each channel and initialise the arrays for 
 // holding the value written out to the pins.
-int channel1Pins[] = {10,11,9};
-int channel2Pins[] = {3,5,6};
+int channel0Pins[] = {10,11,9};
+int channel1Pins[] = {5,6,3};
+int channel0PinValue[] = {0,0,0};
 int channel1PinValue[] = {0,0,0};
-int channel2PinValue[] = {0,0,0};
 
 // more global variable definitions 
-int tick = 0;
-int frame = 0;
-int frameLength = 100;
-int numFrames = 0;
-int nextFrame = 1;
+int tick0 = 0; // tick (sub frame) counter for channel 0 
+int tick1 = 0; // tick (sub frame) counter for channel 1 
+int frame0 = 0; // frame counter for channel 0
+int frame1 = 0; // frame counter for channel 1
+int frameLength0 = 100; // length of the frame (number of ticks per frame)
+int frameLength1 = 100;
+int numFrames0 = 0; // number of frames in the sequence
+int numFrames1 = 0;
+int nextFrame0 = 1;// the next frame in the sequence
+int nextFrame1 = 1;
 
 // The arrays holding the RGB looping colour sequences.
 // you can specify an arbitary number of frames, probably a minimum of two. 
@@ -51,12 +56,12 @@ int mega[][4]   = {{255,0,0,100},{0,255,0,100},{0,0,255,100},{0,255,255,100},{25
 void setup()
 {
   Serial.begin(9600); //open serial port
-  pinMode(channel1Pins[0], OUTPUT); // define required pins as outputs
+  pinMode(channel0Pins[0], OUTPUT); // define required pins as outputs
+  pinMode(channel0Pins[1], OUTPUT);
+  pinMode(channel0Pins[2], OUTPUT);
+  pinMode(channel1Pins[0], OUTPUT);
   pinMode(channel1Pins[1], OUTPUT);
   pinMode(channel1Pins[2], OUTPUT);
-  pinMode(channel2Pins[0], OUTPUT);
-  pinMode(channel2Pins[1], OUTPUT);
-  pinMode(channel2Pins[2], OUTPUT);
 }
 
 
@@ -68,32 +73,48 @@ void loop()
   
   // for each channel, create play an appropriate sequence for that channel's
   // alert status
+  
+  //Channel 0, gonna be most important obviously becuase http://youtu.be/b7qsaFrw_Z8
   switch (alertStatus[0]) 
   {
     case 0:
-      // the alert function takes the name of the array holdint the sequence, 
-      // and the length of the array (which for some unknown reason needs to 
-      // be divided by eight to reflect the number of frames)
-      alert(noData,sizeof(noData)/8);
+      // the alert function takes the name of the array holding the sequence, 
+      // the length of the array (which for some unknown reason needs to 
+      // be divided by eight to reflect the number of frames), and the
+      // channel it needs to be renderd to
+      alert0(noData,sizeof(noData)/8);
       break;
     case 1:
-      alert(normal,sizeof(normal)/8);
+      alert0(normal,sizeof(normal)/8);
       break;
     case 2:
-      alert(active,sizeof(active)/8);
+      alert0(active,sizeof(active)/8);
       break;
     case 3:
-      alert(mClass,sizeof(mClass)/8);
+      alert0(mClass,sizeof(mClass)/8);
       break;
     case 4:
-      alert(xClass,sizeof(xClass)/8);
+      alert0(xClass,sizeof(xClass)/8);
       break;
     case 5:
-      alert(mega,sizeof(mega)/8);
+      alert0(mega,sizeof(mega)/8);
       break;
     default: 
-      alert(noData,sizeof(noData)/8);
+      alert0(noData,sizeof(noData)/8);
   }
+
+  //Channel 1, http://youtu.be/Azeuyf4zeJk?hd=1 try not to overload it.
+  switch (alertStatus[1]) 
+  {
+    case 0: alert1(noData,sizeof(noData)/8); break;
+    case 1: alert1(normal,sizeof(normal)/8); break;
+    case 2: alert1(active,sizeof(active)/8); break;
+    case 3: alert1(mClass,sizeof(mClass)/8); break;
+    case 4: alert1(xClass,sizeof(xClass)/8); break;
+    case 5: alert1(mega,sizeof(mega)/8);     break;
+    default: alert1(noData,sizeof(noData)/8);
+  }
+
 }
 
 
