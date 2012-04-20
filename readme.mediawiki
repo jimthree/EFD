@@ -1,0 +1,7 @@
+==What is EFD?==
+An Extreeme feedback device for Arduino, with two RGB channels of Feedback. 
+The EFD looks for a packet to come in on the serial line with the format "%xy" for example "%001008" The packet always starts with a percent sign "%" (ascii byte 37) If it finds anything else it discards the data and flushes the buffer. If it does find a % then it reads the next two bytes as Channel and alert status.  As this is a two channel EFD, channel can only be 0 or 1
+Alert status can any value between 0 and 255.  No error checking is done to detect out of bounds values, the responsibility for this is on the sender.
+Currently this EFD is set up to inidicate the alert status set by an application that monitors the activity of the sun (often referred to as 'Space Weather').
+Can be run on a ATmega168 based Arduino or better.
+
